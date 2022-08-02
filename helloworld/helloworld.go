@@ -14,6 +14,7 @@ package main
 // debug/configuration flags that can be tweaked.
 
 import (
+	"bufio"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -142,6 +143,26 @@ func HandleHTTP(w http.ResponseWriter, r *http.Request) {
 		PrintMessage(w, showAll)
 	} else {
 		fmt.Fprintf(w, string(body)+"\n")
+	}
+
+	// Try to HTTP GET API on HPVS -> HPCS
+	resp, err := http.Get("http://52.116.100.169:443/random")
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	fmt.Fprintln(w, "Response status:", resp.Status)
+
+	scanner := bufio.NewScanner(resp.Body)
+
+	// Print all the lines of the HTTP Response Body
+	for scanner.Scan() {
+		fmt.Fprintln(w, scanner.Text())
+	}
+
+	if err := scanner.Err(); err != nil {
+		panic(err)
 	}
 }
 

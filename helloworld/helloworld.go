@@ -146,6 +146,9 @@ func HandleHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Perform a HTTP GET on HPVS Web API -> HPCS
+	fmt.Fprintln(w, "")
+	fmt.Fprintln(w, "Call a Web API:")
+	fmt.Fprintln(w, "---------------")
 	resp, err := http.Get("http://52.116.100.169:443/random")
 	if err != nil {
 		panic(err)
